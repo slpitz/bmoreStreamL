@@ -80,6 +80,7 @@ st.write("show df of photo")
 closeby = getNeighbors("AddressPhotos/" + imageselect, realPropShape1)
 st.write(closeby)
 
+st.table(closeby)
 
 
 
