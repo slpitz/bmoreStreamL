@@ -38,6 +38,13 @@ def getNeighbors(geoTiff, bigdf): #geotiff, dataframe to parse, new dataframeNam
     return newdf
     #return df that has the addresses in the photo
 
+def subsetVac(divisor):
+    dataframe1 = pd.read_csv(DATA_URL)
+    remain = list(range(1, len(dataframe1), divisor))
+    filtered = dataframe1.iloc[remain]
+    return filtered 
+
+
 onlyfiles = [f for f in listdir("AddressPhotos/") if isfile(join("AddressPhotos/", f))]
 imageselect = st.sidebar.selectbox("Pick an image.", onlyfiles)
 
@@ -46,7 +53,7 @@ st.sidebar.markdown("""
 ### Contact 
 This website was created by Scott P (insert email).""")
 
-st.image('CITY-LOGO.png', caption="Charm City", width=100)
+#st.image('CITY-LOGO.png', caption="Charm City", width=100)
 #st.image('1900-PENROSE-AVE.tif', caption="Charm City", width=400)
 
 
@@ -60,7 +67,7 @@ st.write("Pick an image from the left. You'll be able to view the image.")
 #st.write("When you're ready, submit a prediction on the left.")
 
 image = Image.open("AddressPhotos/" + imageselect)
-st.image(image, caption="Let's predict roof integrity.", width=200)
+st.image(image, caption="Let's predict roof integrity.", width=300)
 
 loadedGeotif = rasterio.open("AddressPhotos/" + imageselect)
 #st.write(loadedGeotif.bounds)
@@ -88,15 +95,11 @@ def load_data(nrows):
     #data[DATE_COLUMN] = pd.to_datetime(data[DATE_COLUMN])
     return data
 
-#use modulo operator to load rows with no remainder
-
 def subsetVac(divisor):
     dataframe1 = pd.read_csv(DATA_URL)
     remain = list(range(1, len(dataframe1), divisor))
     filtered = dataframe1.iloc[remain]
     return filtered 
-
-
 
 
 # Create a text element and let the reader know the data is loading.
@@ -107,20 +110,12 @@ data = load_data(5000)
 st.write('Done! (using st.cache)')
 
 
-
-st.subheader('Raw data')
-st.write(data)
-
-map_data = pd.DataFrame(
-    np.random.randn(1000, 2) / [50, 50] + [37.76, -122.4],
-    columns=['lat', 'lon'])
-
-# st.map(map_data)
-st.map(data)
-
+st.subheader('Subset of current Vacant Homes')
 smallerVacantdf = subsetVac(15)
-st.write(smallerVacantdf)
+
+#st.write('Subset of vacant homes from across Baltimore')
 st.map(smallerVacantdf)
+st.write(smallerVacantdf)
 
 #To Do:
 #select subset of vacant homes to show on map
