@@ -38,11 +38,6 @@ def getNeighbors(geoTiff, bigdf): #geotiff, dataframe to parse, new dataframeNam
     return newdf
     #return df that has the addresses in the photo
 
-add_selectbox = st.sidebar.selectbox(
-    'Select an address:',
-    ('Payson', 'Fulton'))
-
-
 onlyfiles = [f for f in listdir("AddressPhotos/") if isfile(join("AddressPhotos/", f))]
 imageselect = st.sidebar.selectbox("Pick an image.", onlyfiles)
 
@@ -62,7 +57,7 @@ DATA_URL = ('Vacant_Buildings_lat_long.csv')
 
 #st.title('Animal Identification')
 st.write("Pick an image from the left. You'll be able to view the image.")
-st.write("When you're ready, submit a prediction on the left.")
+#st.write("When you're ready, submit a prediction on the left.")
 
 image = Image.open("AddressPhotos/" + imageselect)
 st.image(image, caption="Let's predict roof integrity.", width=200)
@@ -76,13 +71,14 @@ st.write("load real property file")
 realPropShape1 = pd.read_csv('CondensedRealPropShapeData.csv')
 
 #run function to produce
-st.write("show df of photo")
+#st.write("show df of photo")
 closeby = getNeighbors("AddressPhotos/" + imageselect, realPropShape1)
-st.write(closeby)
+#st.write(closeby)
 
 st.table(closeby)
 
-
+DATE_COLUMN = 'date/time'
+DATA_URL = ('Vacant_Buildings_lat_long.csv')
 
 @st.cache
 def load_data(nrows):
@@ -92,12 +88,25 @@ def load_data(nrows):
     #data[DATE_COLUMN] = pd.to_datetime(data[DATE_COLUMN])
     return data
 
+#use modulo operator to load rows with no remainder
+
+def subsetVac(divisor):
+    dataframe1 = pd.read_csv(DATA_URL)
+    remain = list(range(1, len(dataframe1), divisor))
+    filtered = dataframe1.iloc[remain]
+    return filtered 
+
+
+
+
 # Create a text element and let the reader know the data is loading.
 data_load_state = st.text('Loading data...')
 # Load 1000 rows of data into the dataframe.
-data = load_data(8000)
+data = load_data(5000)
 # Notify the reader that the data was successfully loaded.
 st.write('Done! (using st.cache)')
+
+
 
 st.subheader('Raw data')
 st.write(data)
@@ -108,3 +117,10 @@ map_data = pd.DataFrame(
 
 # st.map(map_data)
 st.map(data)
+
+smallerVacantdf = subsetVac(15)
+st.write(smallerVacantdf)
+st.map(smallerVacantdf)
+
+#To Do:
+#select subset of vacant homes to show on map
