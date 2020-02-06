@@ -44,18 +44,23 @@ def subsetVac(divisor):
     filtered = dataframe1.iloc[remain]
     return filtered 
 
+st.sidebar.image('CITY-LOGO.png', caption="Charm City", width=100)
+
+testSetDataframe = pd.read_csv('testSetPreds.csv')
+
+dropDownAddress = testSetDataframe[['dashAddress']]
+
+st.write(dropDownAddress['dashAddress'].values.tolist())
 
 onlyfiles = [f for f in listdir("AddressPhotos/") if isfile(join("AddressPhotos/", f))]
-imageselect = st.sidebar.selectbox("Pick an image.", onlyfiles)
+#st.write(type(onlyfiles))
+imageselect = st.sidebar.selectbox("Pick an image.", dropDownAddress['dashAddress'].values.tolist())
+st.write(onlyfiles)
 
 #Contact Info
 st.sidebar.markdown("""
 ### Contact 
-This website was created by Scott P (insert email).""")
-
-#st.image('CITY-LOGO.png', caption="Charm City", width=100)
-#st.image('1900-PENROSE-AVE.tif', caption="Charm City", width=400)
-
+This website was created by Scott Pitz (insert email).""")
 
 st.title('Project Skylight')
 
@@ -118,4 +123,6 @@ st.map(smallerVacantdf)
 st.write(smallerVacantdf)
 
 #To Do:
-#select subset of vacant homes to show on map
+#select subset of vacant homes to show on map - done
+#remove brackets and clean up drop down menu
+
