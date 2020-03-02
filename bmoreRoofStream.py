@@ -64,7 +64,7 @@ imageselect = st.sidebar.selectbox("Pick an address from the menu", dropDownAddr
 #Contact Info
 st.sidebar.markdown("""
 ### Contact 
-This website was created by Scott Pitz (insert email).""")
+This website was created by Scott Pitz (slpitz @ gmail dot com).""")
 
 ######################################################
 ###################  Main Page #######################
@@ -82,13 +82,19 @@ image = Image.open("AddressPhotos/" + imageselect+ ".tif")
 st.image(image, caption="Let's predict roof integrity.", width=300)
 
 ######################################################
-st.write("Center Address:  "+ imageselect) 
-#st.write(list(testSetDataframe))
-#american = testSetDataframe[testSetDataframe['dashAddress'] == imageselect, 'Collapsed']
-#testSetDataframe.loc[testSetDataframe['dashAddress'] == imageselect, 'Collapsed']
+#  Stats from model
+st.write("**Center Address**:  "+ imageselect)
+
+
 solidProb = testSetDataframe.loc[testSetDataframe['dashAddress'] == imageselect].iloc[0]['Solid']
-st.write("The Solid Probability is:  " + str(solidProb.round(3)))
-#df.loc[df['B'] == 3, 'A'].iloc[0]
+collapsedProb = 1-solidProb
+
+if collapsedProb  > 0.35:
+	st.write("The image likely has a **BAD** roof.")
+elif collapsedProb  < 0.35:
+	st.write("The roofs are likely ok ... for now.")
+
+st.write("The Collapsed Probability is:  " + str(collapsedProb.round(3)))
 
 ######################################################
 #Load neighbors data
@@ -100,7 +106,8 @@ loadedGeotif = rasterio.open("AddressPhotos/" + rasterFileName)
 
 
 #load shapefile deried csv
-st.write("load real property file")
+st.write("")
+st.write("Residents and property inside photo bounds")
 realPropShape1 = pd.read_csv('CondensedRealPropShapeData.csv')
 
 #run function to produce
@@ -136,12 +143,12 @@ data_load_state = st.text('Loading data...')
 # Load 1000 rows of data into the dataframe.
 data = load_data(5000)
 # Notify the reader that the data was successfully loaded.
-st.write('Done! (using st.cache)')
+#st.write('Done! (using st.cache)')
 
 
-st.subheader('Subset of current Vacant Homes')
+st.subheader('**Subset of current vacant homes**')
 smallerVacantdf = subsetVac(15)
-s
+
 #st.write('Subset of vacant homes from across Baltimore')
 st.map(smallerVacantdf)
 st.write(smallerVacantdf)
